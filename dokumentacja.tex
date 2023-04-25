@@ -13,6 +13,7 @@
 \usepackage{amssymb}
 \usepackage{esvect}
 \usepackage{graphicx}
+\usepackage{hyperref}
 
 \graphicspath{ {./obrazy/} }
 
@@ -43,12 +44,37 @@
 \maketitle
 \section{Czym jest steganografia? Do czego służy?}
 Steganografia polega na ukrywaniu informacji przez ukrywanie komunikacji w innej formie transmisji danych
-np. w obrazkach,  plikach dźwiękowych.  Można zadać sobie pytanie po co stosować steganografię? Jest kilka 
-zastosowań:
+np. w obrazkach,  plikach dźwiękowych, tekstowych.  Zastosowania steganografii
 \begin{itemize}
-	\item 
+	\item omijanie cenzury/szpiegostwo
+	\item umieszczanie znaków wodnych
+	\item ukryta wymiana danych
+	\item dodawanie metadanych do plików (np. znaki sterujące)
+	\item numery seryjne drukarek (za pomocą małych kropek)
+	\item wprowadzanie opóźnień w pakietach sieciowych
+	\item zastosowania w VoIP (steganofonia)
+	\item zabezpieczanie banknotów (np. EURion constellation)
+\end{itemize}
+\begin{figure}
+	\centering
+	\includegraphics[width=5cm]{stego_drukarkowa}
+	\caption{"kropki" zamieszczane przez drukarki}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=5cm]{eurion}
+	\includegraphics[width=5cm]{euro}
+	\caption{EURion - układ kropek przypominających konstelację Oriona umieszczany na wielu banknotach}
+\end{figure}
+Steganografia może zatem realizować następujące funkcje bezpieczeństwa
+\begin{itemize}
+	\item poufność
+	\item autentyczność
+	\item niezaprzeczalność
+	\item integralność
 \end{itemize}
 \section{Podział steganografii}
+Ze względu na sposób ukrywania danych
 \begin{itemize}
 	\item steganografia czysta - nie jest stosowany żaden klucz, tekst jawny ukrywamy w pliku, jest to metoda 	Security through obscurity (nie spełnia zasady Kerckhoffsa)
 	\item steganografia z kluczem prywatnym - przed komunikacją ustalany jest (np. algorytmem DH) klucz
@@ -56,11 +82,23 @@ zastosowań:
 	\item steganografia z kluczem publicznym - w pliku ukrywamy szyfrogram zaszyfrowany kluczem publicznym
 	odbiorcy
 \end{itemize}
+Ze względu na medium komunikacji
+\begin{itemize}
+	\item w plikach tekstowych
+	\item w plikach audio
+	\item w obrazach
+\end{itemize}
+\section{Słowniczek}
+
+\section{Historia steganografii}
 \section{Algorytmy steganografii w obrazach}
 \subsection{Modyfikacja LSB}
-\subsection{Gamma trick}
+\subsection{Gamma trick*}
 \section{Algorytmy steganografii w plikach audio}
-\section{Stegoanaliza}
-
+\section{Steganoanaliza}
+\section{Źródła}
+\begin{itemize}
+	\item \url{https://pl.wikipedia.org/wiki/Steganografia_drukarkowa}
+\end{itemize}
 
 \end{document}
