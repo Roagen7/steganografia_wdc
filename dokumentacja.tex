@@ -1,6 +1,6 @@
 \documentclass{article}
 
-\title{Podstawy steganografii}
+\title{Podstawy steganografii i stegoanalizy}
 \author{Dominik Lau, Sebastian Kutny, Tomasz Lewandowski, Maciej Krzyżanowski}
 
 \usepackage{blindtext}
@@ -14,6 +14,7 @@
 \usepackage{esvect}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{float}
 
 \graphicspath{ {./obrazy/} }
 
@@ -60,12 +61,6 @@ np. w obrazkach,  plikach dźwiękowych, tekstowych.  Zastosowania steganografii
 	\includegraphics[width=5cm]{stego_drukarkowa}
 	\caption{"kropki" zamieszczane przez drukarki}
 \end{figure}
-\begin{figure}
-	\centering
-	\includegraphics[width=5cm]{eurion}
-	\includegraphics[width=5cm]{euro}
-	\caption{EURion - układ kropek przypominających konstelację Oriona umieszczany na wielu banknotach}
-\end{figure}
 Steganografia może zatem realizować następujące funkcje bezpieczeństwa
 \begin{itemize}
 	\item poufność
@@ -73,32 +68,72 @@ Steganografia może zatem realizować następujące funkcje bezpieczeństwa
 	\item niezaprzeczalność
 	\item integralność
 \end{itemize}
+Porównanie kryptografii i steganografii
+\begin{center}
+\begin{tabular}{c | c  c }
+& kryptografia & steganografia \\
+\hline
+cel & zapewnienie poufności & ukrycie komunikacji \\
+obecność klucza & tak & opcjonalna \\
+widoczność danych & nie & tak \\
+modyfikacja struktury  \\
+ przetwarzanych danych & nie & tak
+\end{tabular}
+\end{center}
 \section{Podział steganografii}
 Ze względu na sposób ukrywania danych
 \begin{itemize}
 	\item steganografia czysta - nie jest stosowany żaden klucz, tekst jawny ukrywamy w pliku, jest to metoda 	Security through obscurity (nie spełnia zasady Kerckhoffsa)
-	\item steganografia z kluczem prywatnym - przed komunikacją ustalany jest (np. algorytmem DH) klucz
-	steganograficzny wykorzystywany potem w algorytmie, następnie ukrywamy tekst jawny w pliku
+	\item steganografia z kluczem tajnym (symetrycznym) - przed komunikacją ustalany jest (np. algorytmem DH) klucz steganograficzny wykorzystywany potem w algorytmie, następnie ukrywamy tekst jawny w pliku
 	\item steganografia z kluczem publicznym - w pliku ukrywamy szyfrogram zaszyfrowany kluczem publicznym
 	odbiorcy
 \end{itemize}
-Ze względu na medium komunikacji
+Ze względu na kontener
 \begin{itemize}
 	\item w plikach tekstowych
 	\item w plikach audio
 	\item w obrazach
+	\item w ramkach różnych protokołów
 \end{itemize}
 \section{Słowniczek}
-
+\begin{itemize}
+	\item stegosystem - połączenie metod i narzędzi służących do tworzenia ukrytego kanału do przekazywania informacji
+	\item wiadomość - przesyłane dane
+	\item kontener (stego-image) - to wszelkie dane służące do ukrycia tajnej wiadomości
+	\item stegokontener - dane i ukryta w nich tajna wiadomość
+	\item kanał steganograficzny (stegochannel) - kanał transmisji stegokontenera
+	\item klucz (stegokey) - tajny klucz potrzebny do ukrycia stegokontenera
+\end{itemize}
+\begin{figure}
+	\centering
+	\includegraphics[width=8cm]{model_steganografii}
+	\caption{model steganografii}
+\end{figure}
 \section{Historia steganografii}
-\section{Algorytmy steganografii w obrazach}
+\section{Algorytmy i przykłady steganografii w obrazach}
+W tej sekcji prezentujemy wybrane algorytmy steganografii na obrazach oraz przykładowe zastosowania
 \subsection{Modyfikacja LSB}
 \subsection{Gamma trick*}
+\subsection{Eurion}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=5cm]{eurion}
+	\includegraphics[width=5cm]{euro}
+	\includegraphics[width=5cm]{close}
+	\caption{EURion, przykładowy układ na banknocie euro, dollarze}
+\end{figure}
+EURion jak i inne podobne zabiegi stanowią metodę przeciwdziałania fałszerstwom. Na banknotach umieszczane
+są zbiory kropek o różnych średnicach i względnych pozycjach (te parametry są sekretem). Kropki te tworzą
+fingerprint, który jest wykrywany przez oprogramowanie do skanowania (za pomocą metod detekcji wzorca) i
+wszelkie próby kopiowania banknotów są blokowane.  
 \section{Algorytmy steganografii w plikach audio}
 \section{Steganoanaliza}
 \section{Źródła}
 \begin{itemize}
 	\item \url{https://pl.wikipedia.org/wiki/Steganografia_drukarkowa}
+	\item \url{https://royalprice.ru/pl/setting/steganografiya-i-stegoanaliz-obzor-sushchestvuyushchih-programm-i-algoritmov/}
+	\item \url{https://www.researchgate.net/figure/The-model-of-steganography-and-steganalysis_fig1_333772050}
+	\item \url{http://datagenetics.com/blog/september12015/index.html}
 \end{itemize}
 
 \end{document}
