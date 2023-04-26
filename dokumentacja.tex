@@ -94,12 +94,14 @@ Ze względu na kontener
 	\item w plikach audio
 	\item w obrazach
 	\item w ramkach różnych protokołów
+	\item w plikach wykonawczych
+	\item inne...
 \end{itemize}
 \section{Słowniczek}
 \begin{itemize}
 	\item stegosystem - połączenie metod i narzędzi służących do tworzenia ukrytego kanału do przekazywania informacji
-	\item wiadomość - przesyłane dane
-	\item kontener (stego-image) - to wszelkie dane służące do ukrycia tajnej wiadomości
+	\item wiadomość (payload) - przesyłane dane
+	\item kontener (carrier) - to wszelkie dane służące do ukrycia tajnej wiadomości
 	\item stegokontener - dane i ukryta w nich tajna wiadomość
 	\item kanał steganograficzny (stegochannel) - kanał transmisji stegokontenera
 	\item klucz (stegokey) - tajny klucz potrzebny do ukrycia stegokontenera
@@ -110,10 +112,30 @@ Ze względu na kontener
 	\caption{model steganografii}
 \end{figure}
 \section{Historia steganografii}
-\section{Algorytmy i przykłady steganografii w obrazach}
+\section{Algorytmy i przykłady}
 W tej sekcji prezentujemy wybrane algorytmy steganografii na obrazach oraz przykładowe zastosowania
 \subsection{Modyfikacja LSB}
+\textbf{Zakodowanie} \\
+Jest to klasyczny algorytm steganografii, którego główną wadą jest łatwość w wykryciu/zniszczeniu wiadomości
+(np. przez wyzerowanie najmłodszych bitów). Przed niechcianym odczytem wiadomości możemy zapobiec 
+poprzez zastosowanie kryptografii. Zasada działania algorytmu jest prosta:
+\begin{enumerate}
+	\item wybierz, w którym kanale zapisać bity wiadomości (r,g,b, a, może obraz czarnobiały?)
+	\item zastąp stare wartości najmłodszych bitów określonego kanału obrazu kolejnymi bitami wiadomości
+\end{enumerate}
+Analogiczna metoda jest możliwa na plikach dźwiękowych, tylko tam zmieniamy LSB próbek. \\\\
+\textbf{Detekcja} \\
+Prosta metoda wykrycia, czy obraz zawiera zakodowaną wiadomość
+\begin{enumerate}
+	\item dzielimy piksele na bloki
+	\item dla każdego bloku liczymy wartość średnią LSB
+\end{enumerate}
+Jeżeli w obrazie ukryto \textbf{zaszyfrowaną} wiadomość, to niektóre regiony bloków
+powinny mieć średnią $\approx 0.5$
+
 \subsection{Gamma trick*}
+\subsection{Ukrywanie obrazów w spektrogramach}
+
 \subsection{Eurion}
 \begin{figure}[H]
 	\centering
@@ -126,8 +148,7 @@ EURion jak i inne podobne zabiegi stanowią metodę przeciwdziałania fałszerst
 są zbiory kropek o różnych średnicach i względnych pozycjach (te parametry są sekretem). Kropki te tworzą
 fingerprint, który jest wykrywany przez oprogramowanie do skanowania (za pomocą metod detekcji wzorca) i
 wszelkie próby kopiowania banknotów są blokowane.  
-\section{Algorytmy steganografii w plikach audio}
-\section{Steganoanaliza}
+\section{Narzędzia steganograficzne}
 \section{Źródła}
 \begin{itemize}
 	\item \url{https://pl.wikipedia.org/wiki/Steganografia_drukarkowa}
