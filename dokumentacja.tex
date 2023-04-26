@@ -97,11 +97,21 @@ Ze względu na kontener
 	\item w plikach wykonawczych
 	\item inne...
 \end{itemize}
+Ze względu na metodę modyfikacji nośnika
+\begin{itemize}
+	\item \textbf{metody substytucji} - zamiana nadmiarowych danych nośnika
+	\item \textbf{metody transformacyjne} - modyfikacja postaci falowej nośnika
+	\item metody statystyczne - modyfikacja właściwości statystycznych nośnika
+	\item metody generacji nośnika - ukrywanie informacji podczas tworzenia samego nośnika
+	\item metody rozproszonego widma - ukrycie poprzez rozpraszanie danych
+	\item metody zniekształceniowe - wprowadzenie zniekształceń do nośnika i pozyskanie informacji poprzez porównanie nośnika oryginalnego i zniekształconego
+\end{itemize}
+\section{Steganoanaliza}
 \section{Słowniczek}
 \begin{itemize}
 	\item stegosystem - połączenie metod i narzędzi służących do tworzenia ukrytego kanału do przekazywania informacji
 	\item wiadomość (payload) - przesyłane dane
-	\item kontener (carrier) - to wszelkie dane służące do ukrycia tajnej wiadomości
+	\item kontener/nośnik (carrier) - to wszelkie dane służące do ukrycia tajnej wiadomości
 	\item stegokontener - dane i ukryta w nich tajna wiadomość
 	\item kanał steganograficzny (stegochannel) - kanał transmisji stegokontenera
 	\item klucz (stegokey) - tajny klucz potrzebny do ukrycia stegokontenera
@@ -111,9 +121,8 @@ Ze względu na kontener
 	\includegraphics[width=8cm]{model_steganografii}
 	\caption{model steganografii}
 \end{figure}
-\section{Historia steganografii}
-\section{Algorytmy i przykłady}
-W tej sekcji prezentujemy wybrane algorytmy steganografii na obrazach oraz przykładowe zastosowania
+\section{Algorytmy i zastosowania}
+W tej sekcji prezentujemy wybrane algorytmy steganografii oraz przykładowe zastosowania
 \subsection{Modyfikacja LSB}
 \textbf{Zakodowanie} \\
 Jest to klasyczny algorytm steganografii, którego główną wadą jest łatwość w wykryciu/zniszczeniu wiadomości
@@ -131,7 +140,8 @@ Prosta metoda wykrycia, czy obraz zawiera zakodowaną wiadomość
 	\item dla każdego bloku liczymy wartość średnią LSB
 \end{enumerate}
 Jeżeli w obrazie ukryto \textbf{zaszyfrowaną} wiadomość, to niektóre regiony bloków
-powinny mieć średnią $\approx 0.5$
+powinny mieć średnią $\approx 0.5$ (ze względu na losowy charakter szyfrów). Możliwe są
+oczywiście false positives, gdy piksele w niezmodyfikowanym obrazie mają taką charakterystykę.
 
 \subsection{Gamma trick*}
 \subsection{Ukrywanie obrazów w spektrogramach}
@@ -148,7 +158,24 @@ EURion jak i inne podobne zabiegi stanowią metodę przeciwdziałania fałszerst
 są zbiory kropek o różnych średnicach i względnych pozycjach (te parametry są sekretem). Kropki te tworzą
 fingerprint, który jest wykrywany przez oprogramowanie do skanowania (za pomocą metod detekcji wzorca) i
 wszelkie próby kopiowania banknotów są blokowane.  
-\section{Narzędzia steganograficzne}
+\subsection{Znaki wodne}
+Umieszczanie znaków wodnych w plikach ma na celu zamieszczenie informacji o właścicielu praw autorskich.
+Wykorzystujemy różnych metod steganografii w celu zapewnienia:
+\begin{itemize}
+	\item trudności w usunięciu
+	\item odporności na transformacje (\textbf{robustness})
+	\item niedostrzegalności (\textbf{perceptibility})
+	\item przepustowość
+\end{itemize} 
+z czego najważniejszą cechą jest odporność na transformacje
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=8cm]{watermark}
+	\caption{schemat zamieszczania znaku wodnego}
+	\includegraphics[width=8cm]{cap}
+	\caption{CAP(Coded Anti Piracy) - przykład znaku wodnego zamieszczanego w filmach do identyfikacji źródła nielegalnych kopii}
+\end{figure}
+\section{Narzędzia steganograficzne i steganoanalityczne}
 \section{Źródła}
 \begin{itemize}
 	\item \url{https://pl.wikipedia.org/wiki/Steganografia_drukarkowa}
