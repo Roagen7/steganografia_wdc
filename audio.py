@@ -1,14 +1,15 @@
 """
 change image to wav file
+
 sources:
     https://github.com/solusipse/spectrology/blob/master/spectrology.py
     https://solusipse.net/blog/post/basic-methods-of-audio-steganography-spectrograms/
     https://www.clear.rice.edu/elec301/Projects01/smokey_steg/freq.html
 
 how does it work?
-
-we iterate through every pixel of an image file and create a sine wave with corresponding amplitude
-we then add the sine wave
+    1. we iterate through every pixel of an image file
+    2. create a sine wave with corresponding amplitude
+    3. then add the sine wave to sample
 """
 
 import wave, math, array, argparse, sys, timeit
@@ -19,16 +20,19 @@ from math import sin, pi
 SAMPLERATE = 44100
 MIN_FREQ = 20
 MAX_FREQ = 20000
-PIXEL_SIZE = 30
+PIXEL_SIZE = 50
 FRAME_SIZE = SAMPLERATE // PIXEL_SIZE
 
 
 def generate_frequency(freq, amplitude):
-    return int(sin(freq * 2 * pi) * amplitude)
+    out = []
+    for frame in range(FRAME_SIZE):
+        out += [int(sin(freq * 2 * pi * frame/SAMPLERATE) * amplitude)]
+    return out
 
 
 def conversion(args):
-    img = Image.open(args.input).convert('L')
+    img = ImageOps.mirror(Image.open(args.input).convert('L').rotate(180))
     height = img.size[1]
     width = img.size[0]
 
@@ -36,16 +40,20 @@ def conversion(args):
 
     output = wave.open(args.output, 'w')
     output.setparams((1, 2, SAMPLERATE, 0, 'NONE', 'not compressed'))
-    data = array.array('h')
+    data = array.array('h') # signed short
 
     for x in range(width):
-        sample = 0
+        sample = [0 for _ in range(FRAME_SIZE)]
         for y in range(height):
             amplitude = img.getpixel((x, y))
             freq_height = float(y * interval + MIN_FREQ)
-            sample += generate_frequency(freq_height, amplitude)
-        for i in range(PIXEL_SIZE):
-            data.insert(x * PIXEL_SIZE + i, sample)
+            fr = generate_frequency(freq_height, amplitude)
+            sample = [sample[i] + fr[i] for i in range(FRAME_SIZE)]
+
+        for i in range(FRAME_SIZE):
+            sample_norm = sample[i] if sample[i] < 32767 else 32767
+            sample_norm = sample_norm if sample_norm > -32768 else -32768
+            data.insert(x * FRAME_SIZE + i, sample_norm)
 
     output.writeframes(data.tobytes())
     output.close()
