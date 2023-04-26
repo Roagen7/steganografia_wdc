@@ -145,7 +145,42 @@ oczywiście false positives, gdy piksele w niezmodyfikowanym obrazie mają taką
 
 \subsection{Gamma trick*}
 \subsection{Ukrywanie obrazów w spektrogramach}
-
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=5cm]{samobraz}
+	\caption{Obraz zamieniony na dźwięk, bez żadnego "ukrywającego" pliku dźwiękowego, dźwięk
+	ten jest odbierany jako szum}
+\end{figure}
+Inną z technik jest ukrywanie danych w określonych częstotliwościach pliku dźwiękowego.
+Jak to działa? Zaczynamy od konwersji obrazu na odcienie szarości.
+Następnie korzystamy ze wzoru (IDFT - inverse discrete fourier transform)
+\begin{gather*}
+	x = \Sigma_{y=0}^{H-1}I[x,y]sin(\frac{2\pi f i}{S})
+\end{gather*}
+gdzie: \\ 
+$H$ to wysokość obrazu, \\
+$x$ to próbka odpowiadająca $x$-tej kolumnie obrazu,\\
+$I[x,y]$ to jasność piksela o współrzędnych $x,y$, \\
+$S$ to częstotliwość próbkowania, \\
+$i$ to numer próbki w bloku (odwrotna transformacja Fouriera operuje na blokach stałego rozmiaru,
+które łączy w wartość wielomianu w punkcie $x$) \\
+rozmiar bloku definiuje szerokość umieszczanego obrazu (w sensie ilości próbek) 
+\begin{gather*}
+ f = y * \frac{f_{max} - f_{min}}/H + f_{min} 
+\end{gather*}
+ $f_{min}$ to częstotliwość, od której zaczyna
+się dolna krawędź obrazu, $f_{max}$ to górna krawędź (np. $f_{min} = 20$ Hz, $f_{max} = 20$ kHz).
+Chcąc dodać ukryty sygnał do istniejącego pliku dźwiękowego dodajemy sygnały
+\begin{gather*}
+I' = I + \beta x
+\end{gather*}
+$\beta$ to współczynnik tłumienia mający na celu ukrycie "brzęczenia" ukrytego obrazu
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=4cm]{gorszajakosc_spektro}
+	\includegraphics[width=4cm]{szumy_spektro}
+	\caption{Z lewej: przytłumiony sygnał obrazu umieszczony w spektrogramie istniejącego pliku dźwiękowego, z prawej: ilustracja szumów przy braku tłumienia obrazu - szum tworzy widoczne gołym okiem wąsy}
+\end{figure}
 \subsection{Eurion}
 \begin{figure}[H]
 	\centering
