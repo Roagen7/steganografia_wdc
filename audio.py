@@ -16,12 +16,16 @@ import wave, math, array, argparse, sys, timeit
 
 from PIL import Image, ImageOps
 from math import sin, pi
+from scipy.io import wavfile
+
 
 SAMPLERATE = 44100
-MIN_FREQ = 20
+MIN_FREQ = 10000
 MAX_FREQ = 20000
-PIXEL_SIZE = 50
+PIXEL_SIZE = 100
 FRAME_SIZE = SAMPLERATE // PIXEL_SIZE
+DAMP = 50
+START_SOUND_SECOND = 1
 
 
 def generate_frequency(freq, amplitude):
@@ -40,30 +44,59 @@ def conversion(args):
 
     output = wave.open(args.output, 'w')
     output.setparams((1, 2, SAMPLERATE, 0, 'NONE', 'not compressed'))
+
+    carrier = wavfile.read(args.carrier)[1]
+
+    if len(carrier[0]) != 1:  # stereo to mono
+        carrier = [sum(k)/len(k) for k in carrier]
+
+    start_sound_frame = int(START_SOUND_SECOND * SAMPLERATE)
     data = array.array('h') # signed short
+
+    for i in range(min(start_sound_frame, len(carrier))): data.insert(i, int(carrier[i]))
 
     for x in range(width):
         sample = [0 for _ in range(FRAME_SIZE)]
         for y in range(height):
-            amplitude = img.getpixel((x, y))
+            amplitude = img.getpixel((x, y))/DAMP
             freq_height = float(y * interval + MIN_FREQ)
             fr = generate_frequency(freq_height, amplitude)
             sample = [sample[i] + fr[i] for i in range(FRAME_SIZE)]
 
         for i in range(FRAME_SIZE):
-            sample_norm = sample[i] if sample[i] < 32767 else 32767
+
+            ix = x * FRAME_SIZE + i + start_sound_frame
+            original_sample = int(carrier[ix])
+            sample_norm = sample[i] + original_sample
+            sample_norm = sample_norm if sample_norm < 32767 else 32767
             sample_norm = sample_norm if sample_norm > -32768 else -32768
-            data.insert(x * FRAME_SIZE + i, sample_norm)
+            data.insert(ix, sample_norm)
+
+    for i in range(width * FRAME_SIZE + start_sound_frame, len(carrier)): data.insert(i, int(carrier[i]))
 
     output.writeframes(data.tobytes())
     output.close()
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--input", help="Name of the image to be convected.")
-parser.add_argument("-o", "--output", help="Name of the output wav file. Default value: out.wav).")
+parser.add_argument("-o", "--output", help="Name of the output wav file. ).")
+parser.add_argument("-c", "--carrier", help="Name of the input wav file to be used as stegocarrier.")
+parser.add_argument("-p", "--pixel", help="'pixel size', pixels per sample")
+parser.add_argument("-s", help="second, from which to embed image")
+parser.add_argument("-d", "--damp", help="specify damp")
 args = parser.parse_args()
 
-if not args.input or not args.output:
-    raise RuntimeError("provide input and output")
+if not args.input or not args.output or not args.carrier:
+    raise RuntimeError("provide input, output and carrier")
+
+if args.damp:
+    DAMP = int(args.damp)
+
+if args.s:
+    START_SOUND_SECOND = int(args.s)
+
+if args.pixel:
+    PIXEL_SIZE = int(args.pixel)
+    FRAME_SIZE = SAMPLERATE // PIXEL_SIZE
 
 conversion(args)
