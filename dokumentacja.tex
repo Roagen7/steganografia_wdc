@@ -1,6 +1,6 @@
 \documentclass{article}
 
-\title{Podstawy steganografii i stegoanalizy}
+\title{Podstawy steganografii i steganoanalizy}
 \author{Dominik Lau, Sebastian Kutny, Tomasz Lewandowski, Maciej Krzyżanowski}
 
 \usepackage{blindtext}
@@ -81,14 +81,21 @@ modyfikacja struktury  \\
  przetwarzanych danych & nie & tak
 \end{tabular}
 \end{center}
-\section{Podział steganografii}
-Ze względu na sposób ukrywania danych
+\subsection{Słowniczek}
 \begin{itemize}
-	\item steganografia czysta - nie jest stosowany żaden klucz, tekst jawny ukrywamy w pliku, jest to metoda 	Security through obscurity (nie spełnia zasady Kerckhoffsa)
-	\item steganografia z kluczem tajnym (symetrycznym) - przed komunikacją ustalany jest (np. algorytmem DH) klucz steganograficzny wykorzystywany potem w algorytmie, następnie ukrywamy tekst jawny w pliku
-	\item steganografia z kluczem publicznym - w pliku ukrywamy szyfrogram zaszyfrowany kluczem publicznym
-	odbiorcy
+	\item stegosystem - połączenie metod i narzędzi służących do tworzenia ukrytego kanału do przekazywania informacji
+	\item wiadomość (payload) - przesyłane dane
+	\item kontener/nośnik (carrier) - to wszelkie dane służące do ukrycia tajnej wiadomości
+	\item stegokontener - dane i ukryta w nich tajna wiadomość
+	\item kanał steganograficzny (stegochannel) - kanał transmisji stegokontenera
+	\item klucz (stegokey) - tajny klucz potrzebny do ukrycia stegokontenera
 \end{itemize}
+\begin{figure}
+	\centering
+	\includegraphics[width=8cm]{model_steganografii}
+	\caption{model steganografii}
+\end{figure}
+\subsection{Podział steganografii}
 Ze względu na kontener
 \begin{itemize}
 	\item w plikach tekstowych
@@ -107,25 +114,38 @@ Ze względu na metodę modyfikacji nośnika
 	\item metody rozproszonego widma - ukrycie poprzez rozpraszanie danych
 	\item metody zniekształceniowe - wprowadzenie zniekształceń do nośnika i pozyskanie informacji poprzez porównanie nośnika oryginalnego i zniekształconego
 \end{itemize}
-\section{Steganoanaliza}
-\section{Słowniczek}
-\begin{itemize}
-	\item stegosystem - połączenie metod i narzędzi służących do tworzenia ukrytego kanału do przekazywania informacji
-	\item wiadomość (payload) - przesyłane dane
-	\item kontener/nośnik (carrier) - to wszelkie dane służące do ukrycia tajnej wiadomości
-	\item stegokontener - dane i ukryta w nich tajna wiadomość
-	\item kanał steganograficzny (stegochannel) - kanał transmisji stegokontenera
-	\item klucz (stegokey) - tajny klucz potrzebny do ukrycia stegokontenera
-\end{itemize}
-\begin{figure}
+\section{Przykłady rzeczywistych zastosowań steganografii}
+\subsection{Eurion}
+\begin{figure}[H]
 	\centering
-	\includegraphics[width=8cm]{model_steganografii}
-	\caption{model steganografii}
+	\includegraphics[width=5cm]{eurion}
+	\includegraphics[width=5cm]{euro}
+	\includegraphics[width=5cm]{close}
+	\caption{EURion, przykładowy układ na banknocie euro, dollarze}
 \end{figure}
-\section{Algorytmy i zastosowania}
-W tej sekcji prezentujemy wybrane algorytmy steganografii oraz przykładowe zastosowania
-\subsection{Modyfikacja LSB}
-\textbf{Zakodowanie} \\
+EURion jak i inne podobne zabiegi stanowią metodę przeciwdziałania fałszerstwom. Na banknotach umieszczane
+są zbiory kropek o różnych średnicach i względnych pozycjach (te parametry są sekretem). Kropki te tworzą
+fingerprint, który jest wykrywany przez oprogramowanie do skanowania (za pomocą metod detekcji wzorca) i
+wszelkie próby kopiowania banknotów są blokowane.  
+\subsection{Znaki wodne}
+Umieszczanie znaków wodnych w plikach ma na celu zamieszczenie informacji o właścicielu praw autorskich.
+Wykorzystujemy różnych metod steganografii w celu zapewnienia:
+\begin{itemize}
+	\item trudności w usunięciu
+	\item odporności na transformacje (\textbf{robustness})
+	\item niedostrzegalności (\textbf{perceptibility})
+	\item przepustowość
+\end{itemize} 
+z czego najważniejszą cechą jest odporność na transformacje
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=6cm]{watermark}
+	\caption{schemat zamieszczania znaku wodnego}
+	\includegraphics[width=4cm]{cap}
+	\caption{CAP(Coded Anti Piracy) - przykład znaku wodnego zamieszczanego w filmach do identyfikacji źródła nielegalnych kopii}
+\end{figure}
+\section{Przegląd technik steganografii}
+\subsection{Modyfikacja LSB obrazu}
 Jest to klasyczny algorytm steganografii, którego główną wadą jest łatwość w wykryciu/zniszczeniu wiadomości
 (np. przez wyzerowanie najmłodszych bitów). Przed niechcianym odczytem wiadomości możemy zapobiec 
 poprzez zastosowanie kryptografii. Zasada działania algorytmu jest prosta:
@@ -133,17 +153,7 @@ poprzez zastosowanie kryptografii. Zasada działania algorytmu jest prosta:
 	\item wybierz, w którym kanale zapisać bity wiadomości (r,g,b, a, może obraz czarnobiały?)
 	\item zastąp stare wartości najmłodszych bitów określonego kanału obrazu kolejnymi bitami wiadomości
 \end{enumerate}
-Analogiczna metoda jest możliwa na plikach dźwiękowych, tylko tam zmieniamy LSB próbek. \\\\
-\textbf{Detekcja} \\
-Prosta metoda wykrycia, czy obraz zawiera zakodowaną wiadomość
-\begin{enumerate}
-	\item dzielimy piksele na bloki
-	\item dla każdego bloku liczymy wartość średnią LSB
-\end{enumerate}
-Jeżeli w obrazie ukryto \textbf{zaszyfrowaną} wiadomość, to niektóre regiony bloków
-powinny mieć średnią $\approx 0.5$ (ze względu na losowy charakter szyfrów). Możliwe są
-oczywiście false positives, gdy piksele w niezmodyfikowanym obrazie mają taką charakterystykę.
-
+Analogiczna metoda jest możliwa na plikach dźwiękowych, tylko tam zmieniamy LSB próbek.
 \subsection{Gamma trick*}
 \subsection{Ukrywanie obrazów w spektrogramach}
 \begin{figure}[H]
@@ -185,7 +195,7 @@ $\beta$ to współczynnik tłumienia mający na celu ukrycie "brzęczenia" ukryt
 \subsection{Ukrywanie archiwów w obrazach}
 Kolejny bardzo prosty sposób na ukrycie danych w obrazach polega na sklejeniu dwóch plików ze sobą, uzyskując tym samym plik polyglot.  Wymaga to jednak, żeby formaty akceptowały "śmieci" przed nagłówkiem.  Przykładami takich
 formatów są pdf, rar, zip.
-Metodę tą można łatwo wykryć na przykład za pomocą strings. \\\\
+Metodę tą można łatwo wykryć na przykład za pomocą strings/binwalk. \\\\
 Zapisywanie:
 \begin{lstlisting}[language=bash]
   $ cat microprocessors.jpg JAVA_slajdy.pdf > image.jpg
@@ -236,37 +246,44 @@ Homoglify to znaki, których kształty mogą być interpretowane na różne spos
 	\includegraphics[width=12cm]{homoglify}
 	\caption{przykład wiadomości zakodowanej za pomocą Twitter Steganography}
 \end{figure}
-
-\subsection{Eurion}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=5cm]{eurion}
-	\includegraphics[width=5cm]{euro}
-	\includegraphics[width=5cm]{close}
-	\caption{EURion, przykładowy układ na banknocie euro, dollarze}
-\end{figure}
-EURion jak i inne podobne zabiegi stanowią metodę przeciwdziałania fałszerstwom. Na banknotach umieszczane
-są zbiory kropek o różnych średnicach i względnych pozycjach (te parametry są sekretem). Kropki te tworzą
-fingerprint, który jest wykrywany przez oprogramowanie do skanowania (za pomocą metod detekcji wzorca) i
-wszelkie próby kopiowania banknotów są blokowane.  
-\subsection{Znaki wodne}
-Umieszczanie znaków wodnych w plikach ma na celu zamieszczenie informacji o właścicielu praw autorskich.
-Wykorzystujemy różnych metod steganografii w celu zapewnienia:
+\subsection{steghide}
+\section{Steganoanaliza}
+Steganoanaliza (Steganalysis) jest tym samym dla steganografii, czym kryptoanaliza dla kryptografii - sztuką detekcji ukrytych wiadomości.
+Metody steganoanalityczne opierają się głównie na analizie parametrów statystycznych pliku. Przykładowe techniki
 \begin{itemize}
-	\item trudności w usunięciu
-	\item odporności na transformacje (\textbf{robustness})
-	\item niedostrzegalności (\textbf{perceptibility})
-	\item przepustowość
-\end{itemize} 
-z czego najważniejszą cechą jest odporność na transformacje
+	\item analiza widma sygnału (przykładowo przeszukiwanie wysokich częstotliwości)
+	\item niespójności w kompresji (np. "edge ringing" w kompresji JPEG)
+	\item wykorzystywanie oryginalnego nośnika, jeżeli jest dostępny 
+	\item szukanie nietypowych wzorców 
+\end{itemize}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=8cm]{watermark}
-	\caption{schemat zamieszczania znaku wodnego}
-	\includegraphics[width=8cm]{cap}
-	\caption{CAP(Coded Anti Piracy) - przykład znaku wodnego zamieszczanego w filmach do identyfikacji źródła nielegalnych kopii}
+	\includegraphics[width=4cm]{edge_ringing}
+	\includegraphics[width=4cm]{noringing}
+	\caption{obraz z "edge ringing" i bez - jest to przewidywalne zniekształcenie; proste algorytmy steganografii mogą mieć problem z dobrym 
+	odwzorowaniem artefaktów o wysokim prawdopodobieństwie wystąpienia}
 \end{figure}
-\section{Narzędzia steganograficzne i steganoanalityczne}
+\subsection{Zadania steganoanalizy}
+\begin{itemize}
+	\item detekcja instnienia kanału steganograficznego (steganoanaliza pasywna)
+	\item zniszczenie wiadomości w stegokontenerze
+	\item ekstrakcja wiadomości ze stegokontenera
+\end{itemize}
+\subsection{Problemy steganoanalizy}
+\begin{itemize}
+	\item wiele szyfrów ma taką właściwość, że produkuje szyfrogramy przypominające szum biały (o kompletnie płaskim widmie),
+	\item barrage noise - bombardowanie stegokontenerami z losowymi/bezwartościowymi informacjami
+\end{itemize}
+\subsection{Steganoanaliza LSB}
+Prosta metoda wykrycia, czy obraz zawiera zakodowaną wiadomość
+\begin{enumerate}
+	\item dzielimy piksele na bloki
+	\item dla każdego bloku liczymy wartość średnią LSB
+\end{enumerate}
+Jeżeli w obrazie ukryto \textbf{zaszyfrowaną} wiadomość, to niektóre regiony bloków
+powinny mieć średnią $\approx 0.5$ (ze względu na losowy charakter szyfrów). Możliwe są
+oczywiście false positives, gdy piksele w niezmodyfikowanym obrazie mają taką charakterystykę.
+\section{Narzędzia steganoanalityczne}
 \subsection{strings}
 strings to linuxowa komenta wypisująca łańcuchy znaków z danego pliku. Dzięki temu możemy pozyskać informacje 
 o metadanych ukrytych np. w plikach wykonawczych
@@ -275,6 +292,14 @@ o metadanych ukrytych np. w plikach wykonawczych
 	\includegraphics[width=8cm]{strings_example}
 	\caption{przykład użycia strings na pliku wykonawczym w architekturze rv32}
 \end{figure}
+\subsection{binwalk}
+jest to program do znajdowania istniejących nagłówków plików w innym pliku, program umożliwia także analizę entropii pliku
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=8cm]{binwalk}
+	\caption{przykład użycia binwalk na pliku poliglocie jpg + pdf}
+\end{figure}
+\subsection{stegseek}
 \section{Źródła}
 \begin{itemize}
 	\item \url{https://pl.wikipedia.org/wiki/Steganografia_drukarkowa}
@@ -283,6 +308,7 @@ o metadanych ukrytych np. w plikach wykonawczych
 	\item \url{http://datagenetics.com/blog/september12015/index.html}
 	\item \url{https://holloway.nz/steg/}
 	\item \url{https://en.wikipedia.org/wiki/Polyglot_(computing)}
+	\item \url{https://github.com/livz/cloacked-pixel}
 \end{itemize}
 
 \end{document}
