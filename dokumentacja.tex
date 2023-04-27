@@ -16,6 +16,7 @@
 \usepackage{hyperref}
 \usepackage{float}
 
+
 \graphicspath{ {./obrazy/} }
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
@@ -181,6 +182,61 @@ $\beta$ to współczynnik tłumienia mający na celu ukrycie "brzęczenia" ukryt
 	\includegraphics[width=4cm]{szumy_spektro}
 	\caption{Z lewej: przytłumiony sygnał obrazu umieszczony w spektrogramie istniejącego pliku dźwiękowego, z prawej: ilustracja szumów przy braku tłumienia obrazu - szum tworzy widoczne gołym okiem wąsy}
 \end{figure}
+\subsection{Ukrywanie archiwów w obrazach}
+Kolejny bardzo prosty sposób na ukrycie danych w obrazach polega na sklejeniu dwóch plików ze sobą, uzyskując tym samym plik polyglot.  Wymaga to jednak, żeby formaty akceptowały "śmieci" przed nagłówkiem.  Przykładami takich
+formatów są pdf, rar, zip.
+Metodę tą można łatwo wykryć na przykład za pomocą strings. \\\\
+Zapisywanie:
+\begin{lstlisting}[language=bash]
+  $ cat microprocessors.jpg JAVA_slajdy.pdf > image.jpg
+\end{lstlisting}
+W ten sposób ukrywać możemy zwykłe pliki tekstowe
+\begin{lstlisting}[language=bash]
+  $ cat microprocessors.jpg haslo.txt > image.jpg
+\end{lstlisting}
+wówczas 
+\begin{lstlisting}[language=bash]
+ $ strings image.jpg
+	...
+ 	ri]P
+	:9w;
+	!`{?
+	haslo
+\end{lstlisting}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=8cm]{sklejanie}
+	\caption{Przykład pliku "poligloty", który może być jednocześnie interpretowany jako .jpg i .pdf}
+\end{figure}
+Szczególnym przypadkiem złączonych plików są pliki \textbf{GIFAR} - gif + jar.  Przy nieodpowiednio zabezpieczonej stronie umożliwiającej umieszczanie gifów atakujący może uruchomić 
+kod z pliku jar będącego częścią zamieszczonego gifa.  Jary podobnie jak wszystkie formaty bazujące na formacie zip umożliwiają umieszczanie dodatkowych bajtów przed nagłówkiem.
+
+\subsection{Homoglify - Twitter Steganography}
+Homoglify to znaki, których kształty mogą być interpretowane na różne sposoby.  Chcąc przy ich użyciu ukryć wiadomość musimy:
+\begin{enumerate}
+	\item zdefiniować alfabet wiadomości 
+	\begin{itemize}
+		\item ile bitów na znak? np.  6
+		\item jak wygląda alfabet np.   \_abcdefghijklmnopqrstuvwxyz123456789
+		\item dla powyższego alfabetu znak a będzie miał kod 000001 a np.  l 001100
+	\end{itemize}
+	\item ustalić tekst wiadomości, która będzie kontenerem
+	\item ustalić tekst ukrytej wiadomości i przekodować go na alfabet
+	\item dla każdego znaku kontenera
+	\begin{enumerate}
+		\item sprawdzamy ile ma homoglifów $h$
+		\item liczbę różnych homoglifów danego znaku możemy zakodować na $ceil(log_2 h) = b$ bitach
+		\item bierzemy $b$ bitów ukrywanej wiadomości i na ich podstawie wybieramy, który z homoglifów zapiszemy do tekstu wyjściowego
+		\item czyli na przykład, jeżeli pierwsza litera kontenera to A, które ma 4 homoglify, to bierzemy 2 bity wiadomości, jeżeli jest to 00 to znaku nie zmieniamy, 01 - wybieramy pierwszy homoglif itd...
+	\end{enumerate}
+\end{enumerate}
+Żeby zdekodować wiadomość musimy znać alfabet i ilość bitów na znak.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm]{homoglify}
+	\caption{przykład wiadomości zakodowanej za pomocą Twitter Steganography}
+\end{figure}
+
 \subsection{Eurion}
 \begin{figure}[H]
 	\centering
@@ -211,12 +267,23 @@ z czego najważniejszą cechą jest odporność na transformacje
 	\caption{CAP(Coded Anti Piracy) - przykład znaku wodnego zamieszczanego w filmach do identyfikacji źródła nielegalnych kopii}
 \end{figure}
 \section{Narzędzia steganograficzne i steganoanalityczne}
+\subsection{strings}
+strings to linuxowa komenta wypisująca łańcuchy znaków z danego pliku. Dzięki temu możemy pozyskać informacje 
+o metadanych ukrytych np. w plikach wykonawczych
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=8cm]{strings_example}
+	\caption{przykład użycia strings na pliku wykonawczym w architekturze rv32}
+\end{figure}
 \section{Źródła}
 \begin{itemize}
 	\item \url{https://pl.wikipedia.org/wiki/Steganografia_drukarkowa}
 	\item \url{https://royalprice.ru/pl/setting/steganografiya-i-stegoanaliz-obzor-sushchestvuyushchih-programm-i-algoritmov/}
 	\item \url{https://www.researchgate.net/figure/The-model-of-steganography-and-steganalysis_fig1_333772050}
 	\item \url{http://datagenetics.com/blog/september12015/index.html}
+	\item \url{https://holloway.nz/steg/}
+	\item \url{https://en.wikipedia.org/wiki/Polyglot_(computing)}
 \end{itemize}
 
 \end{document}
+
