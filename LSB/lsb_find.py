@@ -1,46 +1,22 @@
+# input image name, block size and probability of text threshold from command line arguments, for example:
+# python3 lsb_find.py "gamer_modified.png" 100 0.06
 from PIL import Image
 import os
+import sys
+from base64 import b64decode
+from Crypto.Cipher import AES
+import json
 
-image_name = "gamer.jpg"
-message = 'Fat Cartman'
+image_name = sys.argv[1]
 path = os.path.dirname(os.path.abspath(__file__))
-path_test = os.path.join(path, "Test_Images")
 path_result = os.path.join(path, "Result_Images")
-BLOCK_SIZE = 100
-THRESHOLD = 0.06
-
-
-def LSB_hide(image_file_path, message):
-    image = Image.open(image_file_path)
-
-    binary_message = ''.join(format(ord(i), '08b') for i in message)
-
-    if image.format != 'JPEG':
-        raise ValueError('Wrong picture format')
-
-    if len(binary_message) > image.width * image.height:
-        raise ValueError('Text is too long to be hidden in picture')
-
-    pixels = image.load()
-    pixel_index = 0
-    for i in range(image.width):
-        for j in range(image.height):
-            if pixel_index >= len(binary_message):
-                break
-            r, g, b = pixels[i, j]
-            r = (r & 254) | int(binary_message[pixel_index])
-            pixel_index += 1
-            if pixel_index >= len(binary_message):
-                break
-            g = (g & 254) | int(binary_message[pixel_index])
-            pixel_index += 1
-            if pixel_index >= len(binary_message):
-                break
-            b = (b & 254) | int(binary_message[pixel_index])
-            pixel_index += 1
-            pixels[i, j] = (r, g, b)
-
-    image.save(os.path.join(path_result, image_name.split('.')[0] + "_modified.png"))
+BLOCK_SIZE = int(sys.argv[2])
+THRESHOLD = float(sys.argv[3])
+with open(os.path.join(path_result, image_name.split('.')[0] + "_key.json"), "r") as file:
+    elements = json.loads(file.read())
+nonce = b64decode(elements['nonce'])
+key = b64decode(elements['key'])
+cipher = AES.new(key, AES.MODE_CTR, nonce=nonce)
 
 
 def check_block(row, col, pixels, height):
@@ -84,13 +60,20 @@ def LSB_find(image_file_path):
 
 
 def main():
-    image_file_path = os.path.join(path_test, image_name)
-    modified_image_file_path = os.path.join(path_result, image_name.split('.')[0] + "_modified.png")
-    LSB_hide(image_file_path, message)
+    modified_image_file_path = os.path.join(path_result, image_name)
     texts = LSB_find(modified_image_file_path)
     if texts:
         for text in texts:
-            print(text)
+            possible_encrypted = '\n'.join(text.split('\n')[1:])
+            for i in range(1, len(possible_encrypted)):
+                try:
+                    to_decrypt = possible_encrypted[:i]
+                    ct = b64decode(to_decrypt)
+                    message = cipher.decrypt(ct)
+                    if message:
+                        print(text.split('\n')[0] + " " + message.decode('utf-8'))
+                except:
+                    continue
     else:
         print('No hidden text found')
 
