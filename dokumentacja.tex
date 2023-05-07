@@ -44,6 +44,9 @@
 \begin{document}
 
 \maketitle
+
+\tableofcontents
+
 \section{Czym jest steganografia? Do czego służy?}
 Steganografia polega na ukrywaniu informacji przez ukrywanie komunikacji w innej formie transmisji danych
 np. w obrazkach,  plikach dźwiękowych, tekstowych.  Zastosowania steganografii
@@ -115,6 +118,15 @@ Ze względu na metodę modyfikacji nośnika
 	\item metody zniekształceniowe - wprowadzenie zniekształceń do nośnika i pozyskanie informacji poprzez porównanie nośnika oryginalnego i zniekształconego
 \end{itemize}
 \section{Przykłady rzeczywistych zastosowań steganografii}
+\subsection{Historyczne przykłady użycia steganografii}
+Pierwsze wzmianki o użyciu technik steganograficznych można odnaleźć u Herodota w V wieku p.n.e.   Opisuje on sposób tajnego przekazu informacji: tyran Histiajos przetrzymywany przez króla perskiego Dariusza postanowił przesłać informację do swego zięcia Arystagorasa z Miletu, tak aby mogła się ona przedostać mimo pilnujących go strażników. Aby tego dokonać na wygolonej głowie swego niewolnika wytatuował przesłanie. Kiedy niewolnikowi odrosły włosy posłał go z oficjalnym, mało istotnym listem. W starożytnym Egipcie i Chinach stosowano atrament sympatyczny, czyli
+zapis wiadomości bezbarwną substancją (np. sok z cytryny, który zyskuje barwę przy podgrzaniu). Ponadto już podczas wojny francusko-pruskiej w 1871 a także 2 Wojny Światowej Niemcy wykorzystywali technikę mikrokropek wklejanych
+do tekstu maszynopisu. Na mikrokropkach widoczne były zdjęcia wysokiej rozdzielczości.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=5cm]{mikrokropkowiec}
+	\caption{aparat do wykonywania mikrokropek, skala pomniejszenia ok. 1:300}
+\end{figure}
 \subsection{Eurion}
 \begin{figure}[H]
 	\centering
@@ -154,7 +166,10 @@ poprzez zastosowanie kryptografii. Zasada działania algorytmu jest prosta:
 	\item zastąp stare wartości najmłodszych bitów określonego kanału obrazu kolejnymi bitami wiadomości
 \end{enumerate}
 Analogiczna metoda jest możliwa na plikach dźwiękowych, tylko tam zmieniamy LSB próbek.
-\subsection{Gamma trick*}
+\subsection{Steganografia gamma - gamma trick}
+Wiele programów nie implementuje korekcji gamma (czyli kodowania luminancji obrazu za pomocą nieliniowej charakterystyki $I' = AI^{\gamma}$.
+
+
 \subsection{Ukrywanie obrazów w spektrogramach}
 \begin{figure}[H]
 	\centering
@@ -246,7 +261,28 @@ Homoglify to znaki, których kształty mogą być interpretowane na różne spos
 	\includegraphics[width=12cm]{homoglify}
 	\caption{przykład wiadomości zakodowanej za pomocą Twitter Steganography}
 \end{figure}
-\subsection{steghide}
+
+\subsection{Chaffing i winnowing}
+Chaffing i winnowing to metoda z pogranicza kryptografii jak i steganografii. Technikę tą wymyślił Ron Rivest. Załóżmy, że Alicja chce wysłać wiadomość do Bogdana
+oraz wymienili między sobą klucz, który będą wykorzystywali w algorytmie MAC. Ponadto pakiety będą wysyłane bit po bicie, bity będą ponumerowane (żeby zachować ich kolejność).
+\begin{enumerate}
+	\item Alicja wysyła pakiety wiadomości razem z tagiem MAC tych wiadomości
+	\item między pakietami losowo wysyła również zanegowane wartości bitów z losowymi wartościami tagu MAC (chaffing)
+	\item Bogdan odbiera pakiety i rozważa tylko te, dla których zgadzia się MAC (winnowing)
+\end{enumerate}
+Metoda ta gwarantuje
+\begin{enumerate}
+	\item poufność, podsłuchujący nie wie, który pakiet ma poprawny MAC
+	\item autentyczność, ponieważ poprawne pakiety są zabezpieczone za pomocą MAC
+\end{enumerate}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=3cm]{chaffingwinnowing}
+	\includegraphics[width=8cm]{chaffingwinnowing2}
+	\caption{schemat działania metody i przykład}
+\end{figure}
+
+
 \section{Steganoanaliza}
 Steganoanaliza (Steganalysis) jest tym samym dla steganografii, czym kryptoanaliza dla kryptografii - sztuką detekcji ukrytych wiadomości.
 Metody steganoanalityczne opierają się głównie na analizie parametrów statystycznych pliku. Przykładowe techniki
@@ -300,7 +336,6 @@ jest to program do znajdowania istniejących nagłówków plików w innym pliku,
 	\includegraphics[width=8cm]{binwalk}
 	\caption{przykład użycia binwalk na pliku poliglocie jpg + pdf}
 \end{figure}
-\subsection{stegseek} 
 \subsection{StegExpose}
 StegExpose to narzędzie do wykrywania steganografii LSB bazujące na metodzie RS,  która jest podobna
 do wcześniej omówionej prostej steganoanalizy LSB, z wykorzystaniem teorii grup.
@@ -332,6 +367,10 @@ podejrzanych szumów itp.
 	\item \url{https://github.com/fallais/tweg}
 	\item \url{http://datagenetics.com/blog/september12015/index.html}
 	\item \url{https://carlmastrangelo.com/blog/gamma-steganography}
+	\item \url{https://pl.wikipedia.org/wiki/Mikrokropka}
+	\item \url{https://pl.wikipedia.org/wiki/Steganografia}
+	\item \url{https://en.wikipedia.org/wiki/Chaffing_and_winnowing}
+	\item \url{https://www.researchgate.net/figure/Chaff-and-winnow-based-encryption_fig1_2360410}
 \end{itemize}
 
 \end{document}
