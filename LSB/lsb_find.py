@@ -1,5 +1,5 @@
 # input image name, block size and probability of text threshold from command line arguments, for example:
-# python3 lsb_find.py "gamer_modified.png" 100 0.06
+# python3 lsb_find.py "gamer_modified.png" 100 0.05
 from PIL import Image
 import os
 import sys
@@ -16,7 +16,6 @@ with open(os.path.join(path_result, image_name.split('.')[0] + "_key.json"), "r"
     elements = json.loads(file.read())
 nonce = b64decode(elements['nonce'])
 key = b64decode(elements['key'])
-cipher = AES.new(key, AES.MODE_CTR, nonce=nonce)
 
 
 def check_block(row, col, pixels, height):
@@ -69,6 +68,7 @@ def main():
                 try:
                     to_decrypt = possible_encrypted[:i]
                     ct = b64decode(to_decrypt)
+                    cipher = AES.new(key, AES.MODE_CTR, nonce=nonce)
                     message = cipher.decrypt(ct)
                     if message:
                         print(text.split('\n')[0] + " " + message.decode('utf-8'))

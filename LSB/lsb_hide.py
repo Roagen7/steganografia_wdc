@@ -1,5 +1,5 @@
 # input image name and message from command line arguments, for example:
-# python3 lsb_hide.py "gamer.jpg" "Fat Cartman"
+# python3 lsb_hide.py "gamer.jpg" "Just a pimpled fatboy"
 from PIL import Image
 import os
 import sys
