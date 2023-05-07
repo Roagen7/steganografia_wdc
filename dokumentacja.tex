@@ -255,6 +255,7 @@ Metody steganoanalityczne opierają się głównie na analizie parametrów staty
 	\item niespójności w kompresji (np. "edge ringing" w kompresji JPEG)
 	\item wykorzystywanie oryginalnego nośnika, jeżeli jest dostępny 
 	\item szukanie nietypowych wzorców 
+	\item użycie metod uczenia maszynowego
 \end{itemize}
 \begin{figure}[H]
 	\centering
@@ -299,7 +300,24 @@ jest to program do znajdowania istniejących nagłówków plików w innym pliku,
 	\includegraphics[width=8cm]{binwalk}
 	\caption{przykład użycia binwalk na pliku poliglocie jpg + pdf}
 \end{figure}
-\subsection{stegseek}
+\subsection{stegseek} 
+\subsection{StegExpose}
+StegExpose to narzędzie do wykrywania steganografii LSB bazujące na metodzie RS,  która jest podobna
+do wcześniej omówionej prostej steganoanalizy LSB, z wykorzystaniem teorii grup.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=8cm]{stegexpose}
+	\caption{przykład użycia StegExpose}
+\end{figure}
+\subsection{Sonic Visualizer}
+Sonic Visualizer to program do wizualizacji plików dźwiękowych, który może być użyteczny do znajdowania
+podejrzanych szumów itp.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=8cm]{sonic}
+	\caption{ilustracja wizualizacji sygnału z podejrzanym szumem}
+\end{figure}
+
 \section{Źródła}
 \begin{itemize}
 	\item \url{https://pl.wikipedia.org/wiki/Steganografia_drukarkowa}
@@ -309,6 +327,11 @@ jest to program do znajdowania istniejących nagłówków plików w innym pliku,
 	\item \url{https://holloway.nz/steg/}
 	\item \url{https://en.wikipedia.org/wiki/Polyglot_(computing)}
 	\item \url{https://github.com/livz/cloacked-pixel}
+	\item \url{https://github.com/b3dk7/StegExpose}
+	\item \url{https://link.springer.com/chapter/10.1007/11424826_54}
+	\item \url{https://github.com/fallais/tweg}
+	\item \url{http://datagenetics.com/blog/september12015/index.html}
+	\item \url{https://carlmastrangelo.com/blog/gamma-steganography}
 \end{itemize}
 
 \end{document}
