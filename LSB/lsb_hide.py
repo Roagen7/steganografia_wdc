@@ -1,26 +1,10 @@
-# input image name and message from command line arguments, for example:
-# python3 lsb_hide.py "gamer.jpg" "Just a pimpled fatboy"
+# input image path, result image path and message from command line arguments, for example:
+# python3 lsb_hide.py "your_file_path" "your_result_file_path" "Just a pimpled fatboy"
 from PIL import Image
-import os
 import sys
 from base64 import b64encode
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
-import json
-
-path = os.path.dirname(os.path.abspath(__file__))
-path_test = os.path.join(path, "Test_Images")
-path_result = os.path.join(path, "Result_Images")
-image_name = sys.argv[1]
-message = sys.argv[2].encode('utf-8')
-key = get_random_bytes(16)
-cipher = AES.new(key, AES.MODE_CTR)
-ct_bytes = cipher.encrypt(message)
-nonce = b64encode(cipher.nonce).decode('utf-8')
-key_file = b64encode(key).decode('utf-8')
-ct = b64encode(ct_bytes).decode('utf-8')
-with open(os.path.join(path_result, image_name.split('.')[0] + "_modified_key.json"), "w") as file:
-    file.write(json.dumps({'nonce': nonce, 'key': key_file}))
 
 
 def LSB_hide(image_file_path, message):
@@ -55,12 +39,20 @@ def LSB_hide(image_file_path, message):
             pixel_index += 1
             pixels[i, j] = (r, g, b)
 
-    image.save(os.path.join(path_result, image_name.split('.')[0] + "_modified.png"))
+    image.save(sys.argv[2])
 
 
 def main():
-    image_file_path = os.path.join(path_test, image_name)
-    LSB_hide(image_file_path, ct)
+    image_path = sys.argv[1]
+    message = sys.argv[3].encode('utf-8')
+    key = get_random_bytes(16)
+    cipher = AES.new(key, AES.MODE_CTR)
+    ct_bytes = cipher.encrypt(message)
+    nonce = b64encode(cipher.nonce).decode('utf-8')
+    key_file = b64encode(key).decode('utf-8')
+    ct = b64encode(ct_bytes).decode('utf-8')
+    print("Your nonce: " + nonce + ", your key: " + key_file)
+    LSB_hide(image_path, ct)
 
 
 if __name__ == '__main__':
