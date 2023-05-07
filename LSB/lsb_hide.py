@@ -12,9 +12,6 @@ def LSB_hide(image_file_path, message):
 
     binary_message = ''.join(format(ord(i), '08b') for i in message)
 
-    if image.format != 'JPEG':
-        raise ValueError('Wrong picture format')
-
     if len(binary_message) > image.width * image.height:
         raise ValueError('Text is too long to be hidden in picture')
 
