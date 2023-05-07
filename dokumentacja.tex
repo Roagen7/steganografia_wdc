@@ -151,8 +151,14 @@ Jest to klasyczny algorytm steganografii, którego główną wadą jest łatwoś
 poprzez zastosowanie kryptografii. Zasada działania algorytmu jest prosta:
 \begin{enumerate}
 	\item wybierz, w którym kanale zapisać bity wiadomości (r,g,b, a, może obraz czarnobiały?)
-	\item zastąp stare wartości najmłodszych bitów określonego kanału obrazu kolejnymi bitami wiadomości
+        \item zaszyfruj wiadomość wybranym algorytmem kryptograficznym
+	\item zastąp stare wartości najmłodszych bitów określonego kanału obrazu kolejnymi bitami zaszyfrowanej wiadomości
 \end{enumerate}
+Przy odbieraniu wiadomości wyciągamy daną liczbę bitów ukrytych w pliku oraz deszyfrujemy tak skonstruowany szyfr, co daje nam wiadomość wynikową.
+\\
+Algorytm skutecznie ukrywa wiadomość w obrazie, ponieważ zamiana najmłodszych bitów pliku nie powoduje widocznej dla człowieka zmiany w jego odbiorze. Przy próbie wykonania
+tej samej operacji z MSB może okazać się, że zmiana jest na tyle drastyczna, że wcale nie ukrywa naszych szyfrowanych danych.
+\\
 Analogiczna metoda jest możliwa na plikach dźwiękowych, tylko tam zmieniamy LSB próbek.
 \subsection{Gamma trick*}
 \subsection{Ukrywanie obrazów w spektrogramach}
@@ -282,8 +288,23 @@ Prosta metoda wykrycia, czy obraz zawiera zakodowaną wiadomość
 	\item dla każdego bloku liczymy wartość średnią LSB
 \end{enumerate}
 Jeżeli w obrazie ukryto \textbf{zaszyfrowaną} wiadomość, to niektóre regiony bloków
-powinny mieć średnią $\approx 0.5$ (ze względu na losowy charakter szyfrów). Możliwe są
+powinny mieć średnią ilość jedynek $\approx 0.5$ (ze względu na losowy charakter szyfrów). Możliwe są
 oczywiście false positives, gdy piksele w niezmodyfikowanym obrazie mają taką charakterystykę.
+\\\\
+Bloki podejrzane o zawieranie ukrytej wiadomości dobrze widać na porównaniu wykresu oryginalnego pliku z plikiem zmodyfikowanym.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=8cm]{original_castle.jpg}
+	\includegraphics[width=8cm]{original_hist.png}
+	\caption{Przykład obrazu oryginalnego wraz z jego histogramem LSB}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=8cm]{modified_castle.png}
+	\includegraphics[width=8cm]{mod_hist.png}
+	\caption{Przykład obrazu zmodyfikowanego wraz z jego histogramem LSB}
+\end{figure}
+Przy deszyfrowaniu wiadomości potrzebna jest nam znajomość klucza. Sprawdzamy podejrzany blok tworząc wiadomość z bitów LSB bloku oraz próbujemy zdeszyfrować dane wybranym algorytmem poprzez rozpoczęcie prób deszyfrowania od jednego bajtu do całego bloku dodając po kolei po jednym bajcie więcej bloku. Tym sposobem powinniśmy w którymś momencie działania algorytmu otrzymać poprawną, odszyfrowaną wiadomość.
 \section{Narzędzia steganoanalityczne}
 \subsection{strings}
 strings to linuxowa komenta wypisująca łańcuchy znaków z danego pliku. Dzięki temu możemy pozyskać informacje 

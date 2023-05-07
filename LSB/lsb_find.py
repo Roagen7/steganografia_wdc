@@ -5,9 +5,8 @@ import matplotlib
 from PIL import Image
 import sys
 
-matplotlib.use("MacOSX")
-
 values = []
+
 
 def check_block(row, col, pixels, height, BLOCK_SIZE, THRESHOLD):
     LSB_counter = 0
@@ -30,7 +29,6 @@ def check_block(row, col, pixels, height, BLOCK_SIZE, THRESHOLD):
 
 def LSB_find(image_file_path, BLOCK_SIZE, THRESHOLD):
     image = Image.open(image_file_path)
-
 
     pixels = image.load()
     number_of_blocks = 0
