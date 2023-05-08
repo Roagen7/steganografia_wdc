@@ -172,6 +172,17 @@ Algorytm skutecznie ukrywa wiadomość w obrazie, ponieważ zamiana najmłodszyc
 tej samej operacji z MSB może okazać się, że zmiana jest na tyle drastyczna, że wcale nie ukrywa naszych szyfrowanych danych.
 \\
 Analogiczna metoda jest możliwa na plikach dźwiękowych, tylko tam zmieniamy LSB próbek.
+\subsection*{lsb\_hide.py}
+lsb\_hide.py to nasza implementacja metody omówionej w poprzednim podpunkcie. \\
+
+Skrypt ukrywa w wartościach RGB odpowiedniej ilości pikseli naszą zaszyfrowaną szyfrem AES w trybie licznikowym wiadomość.
+Na wyjściu otrzymujemy wygenerowany dla nas $nonce$ oraz $key$. Argumentami potrzebnymi do wywołania są kolejno: ścieżka do pliku obrazu na którym chcemy ukryć wiadomość,
+ ścieżka do pliku obrazu który zostanie zapisany jako wynik działania algorytmu oraz wiadomość którą chcemy ukryć. \\
+
+Przykładowe użycie skryptu
+\begin{lstlisting}[language=bash]
+python3 lsb_hide.py "your_file_path" "your_result_file_path" "your_message"
+\end{lstlisting}
 
 \subsection{Ukrywanie obrazów w spektrogramach}
 \begin{figure}[H]
@@ -362,6 +373,28 @@ Bloki podejrzane o zawieranie ukrytej wiadomości dobrze widać na porównaniu w
 	\caption{Przykład obrazu zmodyfikowanego wraz z jego histogramem LSB}
 \end{figure}
 Przy deszyfrowaniu wiadomości potrzebna jest nam znajomość klucza. Sprawdzamy podejrzany blok tworząc wiadomość z bitów LSB bloku oraz próbujemy zdeszyfrować dane wybranym algorytmem poprzez rozpoczęcie prób deszyfrowania od jednego bajtu do całego bloku dodając po kolei po jednym bajcie więcej bloku. Tym sposobem powinniśmy w którymś momencie działania algorytmu otrzymać poprawną, odszyfrowaną wiadomość.
+
+\subsection*{lsb\_find.py i lsb\_decrypt.py}
+lsb\_find.py i lsb\_decrypt.py to nasza implementacja metody omówionej w poprzednim podpunkcie. \\
+
+Skrypt lsb\_find.py przeszukuje plik obrazu pod względem podejrzanych bloków o zawieranie ukrytej wiadomości. Po znalezieniu takiego, otrzymujemy jego koordynaty na zdjęciu.\\
+Skrypt lsb\_decrypt.py podejmuje próbę odszyfrowania wiadomości na podstawie koordynatów podejrzanych o zawieranie ukrytej wiadomości.\\
+
+Argumentami potrzebnymi do wywołania skryptu lsb\_find.py są kolejno: ścieżka do pliku obrazu, który podejrzewamy o zawieranie ukrytej wiadomości, wielkość bloku, który będzie
+ analizowany pod kątem zawierania ukrytej wiadomości oraz próg odchyłki od prawdopodobieństwa $0.5$ uznawanego za charakterystykę szyfru.\\
+Argumentami potrzebnymi do wywołania skryptu lsb\_decrypt.py są kolejno: ścieżka do pliku obrazu, który podejrzewamy o zawieranie ukrytej wiadomości, wielkość bloku, który według nas zawiera ukrytą wiadomość, koordynaty ukrytej wiadomości w obrazie (kolejno: szerekość i wysokość), nonce użyty w zaszyfrowaniu wiadomości oraz klucz użyty w zaszyfrowaniu 
+wiadomości.\\
+
+Przykładowe użycie skryptu lsb\_find.py
+\begin{lstlisting}[language=bash]
+python3 lsb_find.py "your_file_path" block_size threshold
+\end{lstlisting}
+
+Przykładowe użycie skryptu lsb\_decrypt.py
+\begin{lstlisting}[language=bash]
+python3 lsb_find.py "your_file_path" block_size width height nonce key
+\end{lstlisting}
+
 \section{Narzędzia steganoanalityczne}
 \subsection{strings}
 strings to linuxowa komenta wypisująca łańcuchy znaków z danego pliku. Dzięki temu możemy pozyskać informacje 
