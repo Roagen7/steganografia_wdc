@@ -172,9 +172,6 @@ Algorytm skutecznie ukrywa wiadomość w obrazie, ponieważ zamiana najmłodszyc
 tej samej operacji z MSB może okazać się, że zmiana jest na tyle drastyczna, że wcale nie ukrywa naszych szyfrowanych danych.
 \\
 Analogiczna metoda jest możliwa na plikach dźwiękowych, tylko tam zmieniamy LSB próbek.
-\subsection{Steganografia gamma - gamma trick}
-Wiele programów nie implementuje korekcji gamma (czyli kodowania luminancji obrazu za pomocą nieliniowej charakterystyki $I' = AI^{\gamma}$.
-
 
 \subsection{Ukrywanie obrazów w spektrogramach}
 \begin{figure}[H]
@@ -198,7 +195,7 @@ $i$ to numer próbki w bloku (odwrotna transformacja Fouriera operuje na blokach
 które łączy w wartość wielomianu w punkcie $x$) \\
 rozmiar bloku definiuje szerokość umieszczanego obrazu (w sensie ilości próbek) 
 \begin{gather*}
- f = y * \frac{f_{max} - f_{min}}/H + f_{min} 
+ f = y * \frac{f_{max} - f_{min}}{H} + f_{min} 
 \end{gather*}
  $f_{min}$ to częstotliwość, od której zaczyna
 się dolna krawędź obrazu, $f_{max}$ to górna krawędź (np. $f_{min} = 20$ Hz, $f_{max} = 20$ kHz).
@@ -213,6 +210,20 @@ $\beta$ to współczynnik tłumienia mający na celu ukrycie "brzęczenia" ukryt
 	\includegraphics[width=4cm]{szumy_spektro}
 	\caption{Z lewej: przytłumiony sygnał obrazu umieszczony w spektrogramie istniejącego pliku dźwiękowego, z prawej: ilustracja szumów przy braku tłumienia obrazu - szum tworzy widoczne gołym okiem wąsy}
 \end{figure}
+\subsection*{audio.py}
+audio.py to nasza implementacja metody omówionej w poprzednim podpunkcie
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=8cm]{audiopyhelp}
+	\caption{wywołanie instrukcji help,  flaga -d to omówiony współczynnik tłumienia, -p to ilość 
+	próbek na piksel }
+\end{figure}
+Przykładowe użycia skryptu
+\begin{lstlisting}[language=bash]
+python3 audio.py --input plik.png --output plik.wav
+python3 audio.py --input plik.png --output plik.wav --carrier carrier.wav
+\end{lstlisting}
+domyślne wartośni nieobowiązkowych parametrów można konfigurować w pierwszych linijkach skryptu
 \subsection{Ukrywanie archiwów w obrazach}
 Kolejny bardzo prosty sposób na ukrycie danych w obrazach polega na sklejeniu dwóch plików ze sobą, uzyskując tym samym plik polyglot.  Wymaga to jednak, żeby formaty akceptowały "śmieci" przed nagłówkiem.  Przykładami takich
 formatów są pdf, rar, zip.
@@ -312,6 +323,16 @@ Metody steganoanalityczne opierają się głównie na analizie parametrów staty
 	\item zniszczenie wiadomości w stegokontenerze
 	\item ekstrakcja wiadomości ze stegokontenera
 \end{itemize}
+\subsection{Podział steganoanalizy}
+Podział w zależności od posiadanych informacji
+\begin{itemize}
+	\item atak skierowany na stegoobiekt  - atakujący ma tylko podejrzany obiekt
+	\item atak ze znajomością nośnika - atakujący ma dostęp do czystego nośnika
+	\item atak ze znajomością wiadomości
+	\item atak z wybranym stegoobiektem - atakujący zna algorytm maskowania
+	\item atak z wybraną wiadomością
+	\item atak ze znanym stegoobiektem - atakujący zna algorytm, czysty nośnik i stegoobiekt
+\end{itemize}
 \subsection{Problemy steganoanalizy}
 \begin{itemize}
 	\item wiele szyfrów ma taką właściwość, że produkuje szyfrogramy przypominające szum biały (o kompletnie płaskim widmie),
@@ -392,6 +413,7 @@ podejrzanych szumów itp.
 	\item \url{https://pl.wikipedia.org/wiki/Steganografia}
 	\item \url{https://en.wikipedia.org/wiki/Chaffing_and_winnowing}
 	\item \url{https://www.researchgate.net/figure/Chaff-and-winnow-based-encryption_fig1_2360410}
+	\item \url{https://klinikadanych.pl/artykuly/steganologia-metody-ukrywania-informacji}
 \end{itemize}
 
 \end{document}
