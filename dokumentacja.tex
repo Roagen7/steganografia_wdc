@@ -172,6 +172,17 @@ Algorytm skutecznie ukrywa wiadomość w obrazie, ponieważ zamiana najmłodszyc
 tej samej operacji z MSB może okazać się, że zmiana jest na tyle drastyczna, że wcale nie ukrywa naszych szyfrowanych danych.
 \\
 Analogiczna metoda jest możliwa na plikach dźwiękowych, tylko tam zmieniamy LSB próbek.
+\subsection*{lsb\_hide.py}
+lsb\_hide.py to nasza implementacja metody omówionej w poprzednim podpunkcie. \\
+
+Skrypt ukrywa w wartościach RGB odpowiedniej ilości pikseli naszą zaszyfrowaną szyfrem AES w trybie licznikowym wiadomość.
+Na wyjściu otrzymujemy wygenerowany dla nas $nonce$ oraz $key$. Argumentami potrzebnymi do wywołania są kolejno: ścieżka do pliku obrazu na którym chcemy ukryć wiadomość,
+ ścieżka do pliku obrazu który zostanie zapisany jako wynik działania algorytmu oraz wiadomość którą chcemy ukryć. \\
+
+Przykładowe użycie skryptu
+\begin{lstlisting}[language=bash]
+python3 lsb_hide.py "your_file_path" "your_result_file_path" "your_message"
+\end{lstlisting}
 
 \subsection{Ukrywanie obrazów w spektrogramach}
 \begin{figure}[H]
@@ -333,6 +344,32 @@ Podział w zależności od posiadanych informacji
 	\item atak z wybraną wiadomością
 	\item atak ze znanym stegoobiektem - atakujący zna algorytm, czysty nośnik i stegoobiekt
 \end{itemize}
+\subsection{Metody wykrywania steganografii}
+\begin{enumerate}
+	\item Metoda Analizy Statycznej\\
+Polega na wykrywaniu nieprawidłowości lub nieoczekiwanych wzorców w danych w ich nośnikach, które mogą wskazywać obecność ukrytych danych. Analiza Statyczna może wykorzystywać przy różnego rodzaju plikach, przykładowo:
+        \begin{itemize}
+            \item rozkład wartości pikseli
+            \item histogramy
+            \item rozkład częstotliwości
+        \end{itemize}
+Można kykorzystać również inne parametry statyczne pliku. Na przykład przy wykrywaniu obrazów może wykorzystywać analizę średnich średnich kolorów czy kontrastu.
+        \item Metoda analizy bitów najmniej znaczących\\
+        inaczej LSB, która została opisana bardzo dokładnie, razem z przykładem w dalszej części dokumentacji.
+        \item Metoda analizy spektralnej\\
+Polega na analizie widma częstotliwościowego sygnału lub obrazu w celu wykrycia nieprawidłowości. Podczas analizy spektralnej zastosowana jest na przykład transformacja Fouriera. Transformacja Fouriera jest to rozkład sygnału w dziedzinie czasu na jego składowe częstotliwości. W ten sposób otrzymujemy informacje o występowaniu różnych częstotliwości w sygnale. Kiedy porównamy otrzymany informacje z wzorcami dla danego nośnika danych możemy wykryć nieprawidłowości, które sugerują obecność ukrytych danych.
+        \item Metoda analizy entropii\\
+Entropia jest miarą nieprzewidywalności lub nieokreśloności, więc analiza entropii polega na ocenie stopnia losowości lub regularności danych w celu wykrycia nieprawidłowości, które będą sugerować ukryte dane.
+        \item Metoda analizy różnicowa\\
+Tę metodę możemy przedstawić w kilku krokach:
+        \begin{itemize}
+            \item Posiadanie oryginalnego nośnika danych, niestety tu możemy mieć problem
+            \item Porównanie z podejrzanym nośnikiem
+            \item Obliczanie różnic między oryginalnym nośnikiem, a podejrzanym (np. na poziomie pikseli w obrazie czy próbek dźwięku)
+            \item Analizujemy wzorce i anomalie, wyniki mogą nam pomóc w analizie innych plików już bez oryginalnego.
+        \end{itemize}
+Ta metoda jest dosyć żmudna i zależy od dokładnej analizy wyników jakie dostajemy.
+\end{enumerate}
 \subsection{Problemy steganoanalizy}
 \begin{itemize}
 	\item wiele szyfrów ma taką właściwość, że produkuje szyfrogramy przypominające szum biały (o kompletnie płaskim widmie),
@@ -362,6 +399,39 @@ Bloki podejrzane o zawieranie ukrytej wiadomości dobrze widać na porównaniu w
 	\caption{Przykład obrazu zmodyfikowanego wraz z jego histogramem LSB}
 \end{figure}
 Przy deszyfrowaniu wiadomości potrzebna jest nam znajomość klucza. Sprawdzamy podejrzany blok tworząc wiadomość z bitów LSB bloku oraz próbujemy zdeszyfrować dane wybranym algorytmem poprzez rozpoczęcie prób deszyfrowania od jednego bajtu do całego bloku dodając po kolei po jednym bajcie więcej bloku. Tym sposobem powinniśmy w którymś momencie działania algorytmu otrzymać poprawną, odszyfrowaną wiadomość.
+
+\subsection*{lsb\_find.py i lsb\_decrypt.py}
+lsb\_find.py i lsb\_decrypt.py to nasza implementacja metody omówionej w poprzednim podpunkcie. \\
+
+Skrypt lsb\_find.py przeszukuje plik obrazu pod względem podejrzanych bloków o zawieranie ukrytej wiadomości. Po znalezieniu takiego, otrzymujemy jego koordynaty na zdjęciu.\\
+Skrypt lsb\_decrypt.py podejmuje próbę odszyfrowania wiadomości na podstawie koordynatów podejrzanych o zawieranie ukrytej wiadomości.\\
+
+Argumentami potrzebnymi do wywołania skryptu lsb\_find.py są kolejno: ścieżka do pliku obrazu, który podejrzewamy o zawieranie ukrytej wiadomości, wielkość bloku, który będzie
+ analizowany pod kątem zawierania ukrytej wiadomości oraz próg odchyłki od prawdopodobieństwa $0.5$ uznawanego za charakterystykę szyfru.\\
+Argumentami potrzebnymi do wywołania skryptu lsb\_decrypt.py są kolejno: ścieżka do pliku obrazu, który podejrzewamy o zawieranie ukrytej wiadomości, wielkość bloku, który według nas zawiera ukrytą wiadomość, koordynaty ukrytej wiadomości w obrazie (kolejno: szerekość i wysokość), nonce użyty w zaszyfrowaniu wiadomości oraz klucz użyty w zaszyfrowaniu 
+wiadomości.\\
+
+Przykładowe użycie skryptu lsb\_find.py
+\begin{lstlisting}[language=bash]
+python3 lsb_find.py "your_file_path" block_size threshold
+\end{lstlisting}
+
+Przykładowe użycie skryptu lsb\_decrypt.py
+\begin{lstlisting}[language=bash]
+python3 lsb_find.py "your_file_path" block_size width height nonce key
+\end{lstlisting}
+
+\section{Narzędzia steganograficzne}
+Wymienione narzędzia mogą zarówno ukrywać jak i wykrywać pliki, motadami jakie wykorzystuje dany program.
+\subsection{Outguess}
+Jest to oprogramowanie steganograficzne do ukrywania i wykrywania danych w obrazach. 
+Metoda działania OutGuess opiera się na podziale obrazu na bloki pikseli, a następnie analizie każdego bloku w celu ukrycia lub wykrycia danych. Podobnie jak wyżej opisana steganografia LSB. W trakcie ukrywania danych przeprowadza analizę statyczną pikseli w blokach obrazu i określa czy blok jest odpowiednim miejscem na ukrycie danych. Jeśli tak OutGuess zamienia najmniej znaczące bity pikseli (LSB) w celu zakodowania ukrytych danych. Taka metoda powoduje, że ukryte dane są odporne na chi-square attack, który opiera się na analizie statystyk pierwszego rzędu.
+\subsection{OpenStego}
+Narzędzie do steganografii, które umożliwia ukrywanie danych w plikach multimedialnych. Wykorzystuje technikę LSB, czyli modyfikuje bity w sposób by nie zostały wykryte ludzkim okiem. OpenStego umożliwia szyfrowanie danych przed ich ukryciem co daje dodatkowe zabezpieczenie przed ich znalezieniem. Posiada również funkcję odkrycia zaszyfrowanych danych przez osoby do tego uprawnione.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=8cm]{OpenStego.png}
+\end{figure}
 \section{Narzędzia steganoanalityczne}
 \subsection{strings}
 strings to linuxowa komenta wypisująca łańcuchy znaków z danego pliku. Dzięki temu możemy pozyskać informacje 
@@ -372,15 +442,16 @@ o metadanych ukrytych np. w plikach wykonawczych
 	\caption{przykład użycia strings na pliku wykonawczym w architekturze rv32}
 \end{figure}
 \subsection{binwalk}
-jest to program do znajdowania istniejących nagłówków plików w innym pliku, program umożliwia także analizę entropii pliku
+Metoda działania Binwalk polega na skanowaniu plików binarnych w poszukiwaniu charakterystycznych sygnatur dla różnych typów danych. Przy pomocy bazy jaką posiada może wykrywać dane takie jak pliki, obrazy, podpisów cyfrowych czy kodów wykonawczych.
+Program umożliwia także analizę entropii pliku, porównywanie różnic binarnych oraz rozpakować znalezione archiwa rekurencyjne.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=8cm]{binwalk}
 	\caption{przykład użycia binwalk na pliku poliglocie jpg + pdf}
 \end{figure}
 \subsection{StegExpose}
-StegExpose to narzędzie do wykrywania steganografii LSB bazujące na metodzie RS,  która jest podobna
-do wcześniej omówionej prostej steganoanalizy LSB, z wykorzystaniem teorii grup.
+Narzędzie do wykrywania steganografii w obrazach, które jest wyspecjalizowane w wykrywaniu steganografii LSB w obrazach bezstratnych jakimi są PNG czy BMP.  Steg wywodzi się z metod steganalizy opartych na pikselach takich jak Sample Pairs, RS Analysis, Chi-Square attack czy Primary Sets. Oprócz wykrywania obecności steganografii, StegExpose oferuje również steganoanalizę ilościową (określanie długości ukrytej wiadomości).
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=8cm]{stegexpose}
@@ -414,6 +485,12 @@ podejrzanych szumów itp.
 	\item \url{https://en.wikipedia.org/wiki/Chaffing_and_winnowing}
 	\item \url{https://www.researchgate.net/figure/Chaff-and-winnow-based-encryption_fig1_2360410}
 	\item \url{https://klinikadanych.pl/artykuly/steganologia-metody-ukrywania-informacji}
+         \item \url{https://en.wikipedia.org/wiki/OutGuess}
+         \item \url{https://github.com/syvaidya/openstego}
+         \item \url{https://www.openstego.com/}
+         \item \url{https://github.com/b3dk7/StegExpose}
+         \item \url{https://www.youtube.com/watch?v=heprU4URpgc}
+         \item \url{https://github.com/ReFirmLabs/binwalk}  
 \end{itemize}
 
 \end{document}
