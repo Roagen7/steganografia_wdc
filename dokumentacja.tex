@@ -313,14 +313,6 @@ Metoda ta gwarantuje
 
 \section{Steganoanaliza}
 Steganoanaliza (Steganalysis) jest tym samym dla steganografii, czym kryptoanaliza dla kryptografii - sztuką detekcji ukrytych wiadomości.
-Metody steganoanalityczne opierają się głównie na analizie parametrów statystycznych pliku. Przykładowe techniki
-\begin{itemize}
-	\item analiza widma sygnału (przykładowo przeszukiwanie wysokich częstotliwości)
-	\item niespójności w kompresji (np. "edge ringing" w kompresji JPEG)
-	\item wykorzystywanie oryginalnego nośnika, jeżeli jest dostępny 
-	\item szukanie nietypowych wzorców 
-	\item użycie metod uczenia maszynowego
-\end{itemize}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=4cm]{edge_ringing}
@@ -353,14 +345,14 @@ Polega na wykrywaniu nieprawidłowości lub nieoczekiwanych wzorców w danych w 
             \item histogramy
             \item rozkład częstotliwości
         \end{itemize}
-Można kykorzystać również inne parametry statyczne pliku. Na przykład przy wykrywaniu obrazów może wykorzystywać analizę średnich średnich kolorów czy kontrastu.
+Można wykorzystać również inne parametry statyczne pliku. Na przykład przy wykrywaniu obrazów może wykorzystywać analizę średnich średnich kolorów czy kontrastu.
         \item Metoda analizy bitów najmniej znaczących\\
         inaczej LSB, która została opisana bardzo dokładnie, razem z przykładem w dalszej części dokumentacji.
         \item Metoda analizy spektralnej\\
 Polega na analizie widma częstotliwościowego sygnału lub obrazu w celu wykrycia nieprawidłowości. Podczas analizy spektralnej zastosowana jest na przykład transformacja Fouriera. Transformacja Fouriera jest to rozkład sygnału w dziedzinie czasu na jego składowe częstotliwości. W ten sposób otrzymujemy informacje o występowaniu różnych częstotliwości w sygnale. Kiedy porównamy otrzymany informacje z wzorcami dla danego nośnika danych możemy wykryć nieprawidłowości, które sugerują obecność ukrytych danych.
         \item Metoda analizy entropii\\
 Entropia jest miarą nieprzewidywalności lub nieokreśloności, więc analiza entropii polega na ocenie stopnia losowości lub regularności danych w celu wykrycia nieprawidłowości, które będą sugerować ukryte dane.
-        \item Metoda analizy różnicowa\\
+        \item Metoda analizy różnicowej\\
 Tę metodę możemy przedstawić w kilku krokach:
         \begin{itemize}
             \item Posiadanie oryginalnego nośnika danych, niestety tu możemy mieć problem
