@@ -1,0 +1,9 @@
+# strings - przykład
+Komenda do połączenia plików:
+```bash
+cat obraz.jpg haslo.txt > regular_image.jpg
+```
+Wykrywanie poligloty:
+```bash
+strings regular_image.jpg | tail
+```
